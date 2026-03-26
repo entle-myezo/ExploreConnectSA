@@ -23,7 +23,6 @@ public class CustomerRepository implements ICustomerRepository {
 
     @Override
     public Customer create(Customer customer) {
-        Helper.requireNonNull(customer, "Customer");
         if (customer.getUserId() == null) {
             throw new IllegalArgumentException("Customer ID cannot be null");
         }
@@ -36,13 +35,11 @@ public class CustomerRepository implements ICustomerRepository {
 
     @Override
     public Customer read(Long id) {
-        Helper.requireNonNull(id, "Customer ID");
         return customerMap.get(id);
     }
 
     @Override
     public Customer update(Customer customer) {
-        Helper.requireNonNull(customer, "Customer");
         if (customer.getUserId() == null) {
             throw new IllegalArgumentException("Customer ID cannot be null");
         }
@@ -55,7 +52,6 @@ public class CustomerRepository implements ICustomerRepository {
 
     @Override
     public Customer delete(Long id) {
-        Helper.requireNonNull(id, "Customer ID");
         return customerMap.remove(id);
     }
 
@@ -71,7 +67,6 @@ public class CustomerRepository implements ICustomerRepository {
 
     @Override
     public Customer findByEmail(String email) {
-        Helper.requireNotEmptyOrNull(email, "Email");
         return customerMap.values().stream()
                 .filter(customer -> customer.getEmail().equalsIgnoreCase(email))
                 .findFirst()
@@ -80,7 +75,6 @@ public class CustomerRepository implements ICustomerRepository {
 
     @Override
     public Customer findByIdentityNumber(String identityNumber) {
-        Helper.requireNotEmptyOrNull(identityNumber, "Identity Number");
         return customerMap.values().stream()
                 .filter(customer -> identityNumber.equals(customer.getIdentityNumber()))
                 .findFirst()
@@ -89,7 +83,6 @@ public class CustomerRepository implements ICustomerRepository {
 
     @Override
     public List<Customer> findByLastName(String lastName) {
-        Helper.requireNotEmptyOrNull(lastName, "Last Name");
         return customerMap.values().stream()
                 .filter(customer -> customer.getLastName().equalsIgnoreCase(lastName))
                 .collect(Collectors.toList());
@@ -97,7 +90,6 @@ public class CustomerRepository implements ICustomerRepository {
 
     @Override
     public List<Customer> findByLoyaltyTier(String tier) {
-        Helper.requireNotEmptyOrNull(tier, "Tier");
         return customerMap.values().stream()
                 .filter(customer -> customer.getLoyaltyProgram() != null &&
                         customer.getLoyaltyProgram().getTier().equalsIgnoreCase(tier))
@@ -106,7 +98,6 @@ public class CustomerRepository implements ICustomerRepository {
 
     @Override
     public boolean existsByEmail(String email) {
-        Helper.requireNotEmptyOrNull(email, "Email");
         return customerMap.values().stream()
                 .anyMatch(customer -> customer.getEmail().equalsIgnoreCase(email));
     }

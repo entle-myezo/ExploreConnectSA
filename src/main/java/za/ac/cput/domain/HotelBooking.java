@@ -25,7 +25,7 @@ public class HotelBooking extends Booking {
     private boolean wifiIncluded;
     private boolean parkingIncluded;
     private List<String> specialRequests;
-    private String cancellationPolicy;
+    private CancellationPolicy cancellationPolicy;
 
     private HotelBooking(Builder builder) {
         // Booking fields
@@ -82,7 +82,7 @@ public class HotelBooking extends Booking {
     public boolean isWifiIncluded() { return wifiIncluded; }
     public boolean isParkingIncluded() { return parkingIncluded; }
     public List<String> getSpecialRequests() { return specialRequests; }
-    public String getCancellationPolicy() { return cancellationPolicy; }
+    public CancellationPolicy getCancellationPolicy() { return cancellationPolicy; }
     public CancellationPolicy getCancellationPolicyObj(){
         return cancellationPolicyObj;
     }
@@ -175,7 +175,7 @@ public class HotelBooking extends Booking {
         private boolean wifiIncluded;
         private boolean parkingIncluded;
         private List<String> specialRequests;
-        private String cancellationPolicy;
+        private CancellationPolicy cancellationPolicy;
 
         public Builder(String hotelName, String location,
                        LocalDateTime checkIn, LocalDateTime checkOut) {
@@ -273,7 +273,7 @@ public class HotelBooking extends Booking {
             return this;
         }
 
-        public Builder setCancellationPolicy(String cancellationPolicy) {
+        public Builder setCancellationPolicy(CancellationPolicy cancellationPolicy) {
             this.cancellationPolicy = cancellationPolicy;
             return this;
         }

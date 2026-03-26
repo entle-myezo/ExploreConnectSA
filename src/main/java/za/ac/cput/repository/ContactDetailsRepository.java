@@ -22,7 +22,6 @@ public class ContactDetailsRepository  implements IContactDetailsRepository {
 
     @Override
     public ContactDetails create(ContactDetails contact) {
-        Helper.requireNonNull(contact, "Contact Details");
         if (contact.getContactId() == null) {
             throw new IllegalArgumentException("Contact ID cannot be null");
         }
@@ -35,13 +34,11 @@ public class ContactDetailsRepository  implements IContactDetailsRepository {
 
     @Override
     public ContactDetails read(Long id) {
-        Helper.requireNonNull(id, "Contact ID");
         return contactMap.get(id);
     }
 
     @Override
     public ContactDetails update(ContactDetails contact) {
-        Helper.requireNonNull(contact, "Contact Details");
         if (contact.getContactId() == null) {
             throw new IllegalArgumentException("Contact ID cannot be null");
         }
@@ -54,7 +51,6 @@ public class ContactDetailsRepository  implements IContactDetailsRepository {
 
     @Override
     public ContactDetails delete(Long id) {
-        Helper.requireNonNull(id, "Contact ID");
         return contactMap.remove(id);
     }
 
@@ -70,7 +66,6 @@ public class ContactDetailsRepository  implements IContactDetailsRepository {
 
     @Override
     public ContactDetails findByEmail(String email) {
-        Helper.requireNotEmptyOrNull(email, "Email");
         return contactMap.values().stream()
                 .filter(contact -> contact.getEmail() != null &&
                         contact.getEmail().equalsIgnoreCase(email))
@@ -80,7 +75,6 @@ public class ContactDetailsRepository  implements IContactDetailsRepository {
 
     @Override
     public ContactDetails findByCellNumber(String cellNumber) {
-        Helper.requireNotEmptyOrNull(cellNumber, "Cell Number");
         return contactMap.values().stream()
                 .filter(contact -> contact.getCellNumber() != null &&
                         contact.getCellNumber().equals(cellNumber))

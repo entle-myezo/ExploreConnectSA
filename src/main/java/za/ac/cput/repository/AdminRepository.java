@@ -23,7 +23,6 @@ public class AdminRepository implements IAdminRepository {
 
     @Override
     public Admin create(Admin admin) {
-        Helper.requireNonNull(admin, "Admin");
         if (admin.getUserId() == null) {
             throw new IllegalArgumentException("Admin ID cannot be null");
         }
@@ -36,13 +35,11 @@ public class AdminRepository implements IAdminRepository {
 
     @Override
     public Admin read(Long id) {
-        Helper.requireNonNull(id, "Admin ID");
         return adminMap.get(id);
     }
 
     @Override
     public Admin update(Admin admin) {
-        Helper.requireNonNull(admin, "Admin");
         if (admin.getUserId() == null) {
             throw new IllegalArgumentException("Admin ID cannot be null");
         }
@@ -55,7 +52,6 @@ public class AdminRepository implements IAdminRepository {
 
     @Override
     public Admin delete(Long id) {
-        Helper.requireNonNull(id, "Admin ID");
         return adminMap.remove(id);
     }
 
@@ -71,7 +67,6 @@ public class AdminRepository implements IAdminRepository {
 
     @Override
     public Admin findByEmail(String email) {
-        Helper.requireNotEmptyOrNull(email, "Email");
         return adminMap.values().stream()
                 .filter(admin -> admin.getEmail().equalsIgnoreCase(email))
                 .findFirst()
@@ -89,7 +84,6 @@ public class AdminRepository implements IAdminRepository {
 
     @Override
     public List<Admin> findByDepartment(String department) {
-        Helper.requireNotEmptyOrNull(department, "Department");
         return adminMap.values().stream()
                 .filter(admin -> admin.getDepartment() != null &&
                         admin.getDepartment().equalsIgnoreCase(department))

@@ -23,7 +23,6 @@ public class AddressRepository implements IAddressRepository {
 
     @Override
     public Address create(Address address) {
-        Helper.requireNonNull(address, "Address");
         if (address.getAddressId() == null) {
             throw new IllegalArgumentException("Address ID cannot be null");
         }
@@ -36,13 +35,11 @@ public class AddressRepository implements IAddressRepository {
 
     @Override
     public Address read(Long id) {
-        Helper.requireNonNull(id, "Address ID");
         return addressMap.get(id);
     }
 
     @Override
     public Address update(Address address) {
-        Helper.requireNonNull(address, "Address");
         if (address.getAddressId() == null) {
             throw new IllegalArgumentException("Address ID cannot be null");
         }
@@ -55,7 +52,6 @@ public class AddressRepository implements IAddressRepository {
 
     @Override
     public Address delete(Long id) {
-        Helper.requireNonNull(id, "Address ID");
         return addressMap.remove(id);
     }
 
@@ -71,7 +67,6 @@ public class AddressRepository implements IAddressRepository {
 
     @Override
     public List<Address> findByCustomerId(Long customerId) {
-        Helper.requireNonNull(customerId, "Customer ID");
         // This requires a mapping between Address and Customer
         return addressMap.values().stream()
                 .filter(address -> false) // Placeholder - needs proper relationship
@@ -80,7 +75,6 @@ public class AddressRepository implements IAddressRepository {
 
     @Override
     public List<Address> findByCity(String city) {
-        Helper.requireNotEmptyOrNull(city, "City");
         return addressMap.values().stream()
                 .filter(address -> address.getCity() != null &&
                         address.getCity().equalsIgnoreCase(city))
@@ -89,7 +83,6 @@ public class AddressRepository implements IAddressRepository {
 
     @Override
     public List<Address> findByPostalCode(String postalCode) {
-        Helper.requireNotEmptyOrNull(postalCode, "Postal Code");
         return addressMap.values().stream()
                 .filter(address -> address.getPostalCode() != null &&
                         address.getPostalCode().equals(postalCode))
@@ -98,7 +91,6 @@ public class AddressRepository implements IAddressRepository {
 
     @Override
     public Address findDefaultAddressByCustomerId(Long customerId) {
-        Helper.requireNonNull(customerId, "Customer ID");
         return addressMap.values().stream()
                 .filter(Address::isDefault)
                 .findFirst()
