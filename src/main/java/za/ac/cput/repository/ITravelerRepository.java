@@ -3,15 +3,11 @@ package za.ac.cput.repository;
 import za.ac.cput.domain.Traveler;
 import java.util.List;
 
-public interface ITravelerRepository {
+public interface ITravelerRepository extends IRepository<Traveler, Long> {
 
-    Traveler create(Traveler traveler);
+    Traveler findById(Long id);
 
-    Traveler read(Long travelerId);
+    List<Traveler> findByBookingId(Long bookingId);
+    Traveler findByPassportNumber(String passportNumber);
 
-    Traveler update(Traveler traveler);
-
-    boolean delete(Long travelerId);
-
-    List<Traveler> getAll();
 }

@@ -29,4 +29,28 @@ class ReviewRepositoryTest {
     @Test
     void getAll() {
     }
+
+    @Test
+    void findById() {
+    }
+
+    @Test
+    void findByCustomerId() {
+    }
+
+    @Test
+    void findByBookingId() {
+    }
+
+    @Test
+    void findByServiceType() {
+    }
+
+    @Test
+    void findByRating() {
+    }
+
+    @Test
+    void getAverageRatingByServiceType() {
+    }
 }

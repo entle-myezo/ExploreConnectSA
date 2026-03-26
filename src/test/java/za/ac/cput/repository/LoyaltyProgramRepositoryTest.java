@@ -30,4 +30,19 @@ class LoyaltyProgramRepositoryTest {
     void getAll() {
     }
 
+    @Test
+    void findById() {
+    }
+
+    @Test
+    void findByCustomerId() {
+    }
+
+    @Test
+    void findByTier() {
+    }
+
+    @Test
+    void findByPointsGreaterThan() {
+    }
 }

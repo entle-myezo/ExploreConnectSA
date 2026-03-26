@@ -3,93 +3,98 @@ package za.ac.cput.repository;
 import za.ac.cput.domain.LoyaltyProgram;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import za.ac.cput.util.Helper;
 
-public class LoyaltyProgramRepository implements ILoyaltyProgramRepository{
+public class LoyaltyProgramRepository implements ILoyaltyProgramRepository {
+    private static LoyaltyProgramRepository repo = null;
+    private Map<Long, LoyaltyProgram> loyaltyMap;
 
-        // Singleton repository instance
-        private static LoyaltyProgramRepository repository = null;
-
-        private final List<LoyaltyProgram> loyaltyProgramList;
-
-        private LoyaltyProgramRepository() {
-            loyaltyProgramList = new ArrayList<>();
-        }
-
-        // Method to get single repository instance
-        public static LoyaltyProgramRepository getRepository() {
-            if (repository == null) {
-                repository = new LoyaltyProgramRepository();
-            }
-            return repository;
-        }
-
-    // Validate object is not null, adding an object to list, returning created object
-    @Override
-        public LoyaltyProgram create(LoyaltyProgram loyaltyProgram) {
-
-            Helper.requireNonNull(loyaltyProgram, "loyaltyProgram");
-
-            loyaltyProgramList.add(loyaltyProgram);
-
-            return loyaltyProgram;
-        }
-
-    // Loop through list to find matching ID
-        @Override
-        public LoyaltyProgram read(Long programId) {
-
-            Helper.requireNonNull(programId, "programId");
-
-            for (LoyaltyProgram lp : loyaltyProgramList) {
-                if (lp.getProgramId().equals(programId)) {
-                    return lp;
-                }
-            }
-            // Return null if not found
-            return null;
-        }
-
-        // Find existing records to update
-        @Override
-        public LoyaltyProgram update(LoyaltyProgram loyaltyProgram) {
-
-            Helper.requireNonNull(loyaltyProgram, "loyaltyProgram");
-
-            LoyaltyProgram existing = read(loyaltyProgram.getProgramId());
-
-            if (existing != null) {
-                loyaltyProgramList.remove(existing);
-                loyaltyProgramList.add(loyaltyProgram);
-
-                return loyaltyProgram;
-            }
-
-            return null;
-        }
-
-    // Finds objects to delete and removes them
-        @Override
-        public boolean delete(Long programId) {
-
-            Helper.requireNonNull(programId, "programId");
-
-            LoyaltyProgram loyaltyProgram = read(programId);
-
-            if (loyaltyProgram != null) {
-                loyaltyProgramList.remove(loyaltyProgram);
-                return true;
-            }
-
-            return false;
-        }
-
-        // Return all stored objects
-        @Override
-        public List<LoyaltyProgram> getAll() {
-
-            return loyaltyProgramList;
-        }
+    private LoyaltyProgramRepository() {
+        loyaltyMap = new HashMap<>();
     }
 
+    public static LoyaltyProgramRepository getRepository() {
+        if (repo == null) {
+            repo = new LoyaltyProgramRepository();
+        }
+        return repo;
+    }
+
+    @Override
+    public LoyaltyProgram create(LoyaltyProgram program) {
+        Helper.requireNonNull(program, "Loyalty Program");
+        if (program.getProgramId() == null) {
+            throw new IllegalArgumentException("Program ID cannot be null");
+        }
+        if (loyaltyMap.containsKey(program.getProgramId())) {
+            throw new IllegalArgumentException("Program with ID " + program.getProgramId() + " already exists");
+        }
+        loyaltyMap.put(program.getProgramId(), program);
+        return program;
+    }
+
+    @Override
+    public LoyaltyProgram read(Long id) {
+        Helper.requireNonNull(id, "Program ID");
+        return loyaltyMap.get(id);
+    }
+
+    @Override
+    public LoyaltyProgram update(LoyaltyProgram program) {
+        Helper.requireNonNull(program, "Loyalty Program");
+        if (program.getProgramId() == null) {
+            throw new IllegalArgumentException("Program ID cannot be null");
+        }
+        if (!loyaltyMap.containsKey(program.getProgramId())) {
+            throw new IllegalArgumentException("Program with ID " + program.getProgramId() + " does not exist");
+        }
+        loyaltyMap.put(program.getProgramId(), program);
+        return program;
+    }
+
+    @Override
+    public LoyaltyProgram delete(Long id) {
+        Helper.requireNonNull(id, "Program ID");
+        return loyaltyMap.remove(id);
+    }
+
+    @Override
+    public List<LoyaltyProgram> getAll() {
+        return new ArrayList<>(loyaltyMap.values());
+    }
+
+    @Override
+    public LoyaltyProgram findById(Long id) {
+        return read(id);
+    }
+
+    @Override
+    public LoyaltyProgram findByCustomerId(Long customerId) {
+        Helper.requireNonNull(customerId, "Customer ID");
+        return loyaltyMap.values().stream()
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public List<LoyaltyProgram> findByTier(String tier) {
+        Helper.requireNotEmptyOrNull(tier, "Tier");
+        return loyaltyMap.values().stream()
+                .filter(program -> program.getTier() != null &&
+                        program.getTier().equalsIgnoreCase(tier))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<LoyaltyProgram> findByPointsGreaterThan(int points) {
+        Helper.requireNotNegative(points, "Points");
+        return loyaltyMap.values().stream()
+                .filter(program -> program.getPoints() > points)
+                .collect(Collectors.toList());
+    }
+}

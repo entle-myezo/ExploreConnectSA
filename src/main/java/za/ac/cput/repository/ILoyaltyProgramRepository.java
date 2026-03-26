@@ -4,14 +4,10 @@ import za.ac.cput.domain.LoyaltyProgram;
 
 import java.util.List;
 
-public interface ILoyaltyProgramRepository {
-    LoyaltyProgram create(LoyaltyProgram loyaltyProgram);
+public interface ILoyaltyProgramRepository extends IRepository<LoyaltyProgram, Long> {
+    LoyaltyProgram findById(Long id);
 
-    LoyaltyProgram read(Long programId);
-
-    LoyaltyProgram update(LoyaltyProgram loyaltyProgram);
-
-    boolean delete(Long programId);
-
-    List<LoyaltyProgram> getAll();
+    LoyaltyProgram findByCustomerId(Long customerId);
+    List<LoyaltyProgram> findByTier(String tier);
+    List<LoyaltyProgram> findByPointsGreaterThan(int points);
 }

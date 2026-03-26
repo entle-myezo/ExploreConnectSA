@@ -29,4 +29,16 @@ class TravelerRepositoryTest {
     @Test
     void getAll() {
     }
+
+    @Test
+    void findById() {
+    }
+
+    @Test
+    void findByBookingId() {
+    }
+
+    @Test
+    void findByPassportNumber() {
+    }
 }
