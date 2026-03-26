@@ -1,90 +1,80 @@
 package za.ac.cput.factory;
 
 import za.ac.cput.domain.*;
+import za.ac.cput.util.Helper;
 
 import java.time.LocalDateTime;
 
 public class FlightBookingFactory {
-    /**
-     * Basic factory (minimum required fields)
-     */
-    public static FlightBooking createFlightBooking(
-            String flightNumber,
-            String airline,
-            String fromLocation,
-            String toLocation,
-            LocalDateTime departureTime
-    ) {
 
-        // 🔒 Validation
-        if (flightNumber == null || flightNumber.isEmpty())
-            throw new IllegalArgumentException("Flight number is required");
+    // Basic Flight Booking
+    public static FlightBooking createFlightBooking(String flightNumber, String airline,
+                                                    String fromLocation, String toLocation,
+                                                    LocalDateTime departureTime,
+                                                    Customer customer, Traveler traveler) {
+        Helper.requireNotEmptyOrNull(flightNumber, "Flight Number");
+        Helper.requireNotEmptyOrNull(airline, "Airline");
+        Helper.requireNotEmptyOrNull(fromLocation, "From Location");
+        Helper.requireNotEmptyOrNull(toLocation, "To Location");
+        Helper.requireNonNull(departureTime, "Departure Time");
+        Helper.requireNonNull(customer, "Customer");
+        Helper.requireNonNull(traveler, "Traveler");
 
-        if (airline == null || airline.isEmpty())
-            throw new IllegalArgumentException("Airline is required");
-
-        if (fromLocation == null || toLocation == null)
-            throw new IllegalArgumentException("Locations cannot be null");
-
-        if (departureTime == null)
-            throw new IllegalArgumentException("Departure time is required");
-
-        return new FlightBooking.Builder(
-                flightNumber,
-                airline,
-                fromLocation,
-                toLocation,
-                departureTime
-        ).build();
+        return new FlightBooking.Builder(flightNumber, airline, fromLocation, toLocation, departureTime)
+                .setBookedBy(customer)
+                .setTravelers(traveler)
+                .build();
     }
 
-    /**
-     *  Full factory (advanced booking)
-     */
-    public static FlightBooking createFullFlightBooking(
-            String flightNumber,
-            String airline,
-            String fromLocation,
-            String toLocation,
-            LocalDateTime departureTime,
-            LocalDateTime arrivalTime,
-            FJourney journeyType,
-            FBookingClass bookingClass,
-            FlightType aircraftType,
-            boolean isDirectFlight,
-            int stopOvers,
-            double baggageAllowance,
-            boolean travelInsurance,
-            Customer customer,
-            Traveler traveler,
-            PaymentDetails payment,
-            CancellationPolicy cancellationPolicy
-    ) {
+    // Full Flight Booking with all details
+    public static FlightBooking createFullFlightBooking(String flightNumber, String airline,
+                                                        String fromLocation, String toLocation,
+                                                        LocalDateTime departureTime,
+                                                        LocalDateTime arrivalTime,
+                                                        FJourney journeyType,
+                                                        FBookingClass bookingClass,
+                                                        FlightType aircraftType,
+                                                        Customer customer,
+                                                        Traveler traveler,
+                                                        CancellationPolicy cancellationPolicy,
+                                                        double subtotal, double taxes) {
+        Helper.requireNonNull(arrivalTime, "Arrival Time");
+        Helper.requireNonNull(journeyType, "Journey Type");
+        Helper.requireNonNull(bookingClass, "Booking Class");
+        Helper.requirePositive(subtotal, "Subtotal");
 
-        // Extra validation
-        if (arrivalTime != null && arrivalTime.isBefore(departureTime))
-            throw new IllegalArgumentException("Arrival time cannot be before departure");
+        FlightBooking flight = createFlightBooking(flightNumber, airline, fromLocation,
+                toLocation, departureTime, customer, traveler);
 
-        return new FlightBooking.Builder(
-                flightNumber,
-                airline,
-                fromLocation,
-                toLocation,
-                departureTime
-        )
+        return new FlightBooking.Builder(flightNumber, airline, fromLocation, toLocation, departureTime)
                 .setArrivalTime(arrivalTime)
                 .setJourneyType(journeyType)
                 .setBookingClass(bookingClass)
                 .setAircraftType(aircraftType)
-                .setDirectFlight(isDirectFlight)
-                .setStopOvers(stopOvers)
-                .setBaggageAllowance(baggageAllowance)
-                .setTravelInsurance(travelInsurance)
                 .setBookedBy(customer)
                 .setTravelers(traveler)
-                .setPayment(payment)
                 .setCancellationPolicy(cancellationPolicy)
+                .setSubtotal(subtotal)
+                .setTaxes(taxes)
+                .setTotalPrice(subtotal + taxes)
+                .copy(flight)
                 .build();
     }
 
+    // Direct Flight Booking
+    public static FlightBooking createDirectFlightBooking(String flightNumber, String airline,
+                                                          String fromLocation, String toLocation,
+                                                          LocalDateTime departureTime,
+                                                          LocalDateTime arrivalTime,
+                                                          Customer customer, Traveler traveler) {
+        FlightBooking flight = createFlightBooking(flightNumber, airline, fromLocation,
+                toLocation, departureTime, customer, traveler);
+
+        return new FlightBooking.Builder(flightNumber, airline, fromLocation, toLocation, departureTime)
+                .setArrivalTime(arrivalTime)
+                .setDirectFlight(true)
+                .setStopOvers(0)
+                .copy(flight)
+                .build();
+    }
 }

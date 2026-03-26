@@ -1,95 +1,74 @@
 package za.ac.cput.factory;
 
 import za.ac.cput.domain.*;
+import za.ac.cput.util.Helper;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class HotelBookingFactory {
-    /**
-     * ✅ Basic factory (minimum required fields)
-     */
-    public static HotelBooking createHotelBooking(
-            String hotelName,
-            String location,
-            LocalDateTime checkIn,
-            LocalDateTime checkOut
-    ) {
 
-        // 🔒 Validation
-        if (hotelName == null || hotelName.isEmpty())
-            throw new IllegalArgumentException("Hotel name is required");
+    // Basic Hotel Booking
+    public static HotelBooking createHotelBooking(String hotelName, String location,
+                                                  LocalDateTime checkIn, LocalDateTime checkOut,
+                                                  Customer customer, Traveler traveler) {
+        Helper.requireNotEmptyOrNull(hotelName, "Hotel Name");
+        Helper.requireNotEmptyOrNull(location, "Location");
+        Helper.requireNonNull(checkIn, "Check-in Date");
+        Helper.requireNonNull(checkOut, "Check-out Date");
+        Helper.requireNonNull(customer, "Customer");
+        Helper.requireNonNull(traveler, "Traveler");
 
-        if (location == null || location.isEmpty())
-            throw new IllegalArgumentException("Location is required");
+        Helper.validateDateRange(checkIn, checkOut, "Check-in", "Check-out");
 
-        if (checkIn == null || checkOut == null || !checkOut.isAfter(checkIn))
-            throw new IllegalArgumentException("Invalid check-in/check-out dates");
-
-        return new HotelBooking.Builder(
-                hotelName,
-                location,
-                checkIn,
-                checkOut
-        ).build();
+        return new HotelBooking.Builder(hotelName, location, checkIn, checkOut)
+                .setBookedBy(customer)
+                .setTravelers(traveler)
+                .build();
     }
 
-    /**
-     * 🔥 Full factory (advanced booking)
-     */
-    public static HotelBooking createFullHotelBooking(
-            String hotelName,
-            String location,
-            LocalDateTime checkIn,
-            LocalDateTime checkOut,
-            String hotelId,
-            String hotelAddress,
-            String hotelPhone,
-            int starRating,
-            RoomTypeAvailable roomType,
-            RoomTypeByOccupancy occupancy,
-            RoomTypeByLayout layout,
-            RoomTypeByBedSize bedSize,
-            List<String> roomNumbers,
-            boolean breakfastIncluded,
-            boolean wifiIncluded,
-            boolean parkingIncluded,
-            List<String> specialRequests,
-            CancellationPolicy cancellationPolicy,
-            Customer customer,
-            Traveler traveler,
-            PaymentDetails payment,
-            CancellationPolicy cancellationPolicyObj
-    ) {
+    // Full Hotel Booking with room configuration
+    public static HotelBooking createFullHotelBooking(String hotelName, String location,
+                                                      LocalDateTime checkIn, LocalDateTime checkOut,
+                                                      RoomTypeAvailable roomType,
+                                                      RoomTypeByOccupancy occupancy,
+                                                      RoomTypeByLayout layout,
+                                                      RoomTypeByBedSize bedSize,
+                                                      int numberOfRooms,
+                                                      Customer customer, Traveler traveler,
+                                                      boolean breakfastIncluded,
+                                                      boolean wifiIncluded) {
+        HotelBooking hotel = createHotelBooking(hotelName, location, checkIn, checkOut,
+                customer, traveler);
 
-        // Extra validation
-        if (starRating < 1 || starRating > 5)
-            throw new IllegalArgumentException("Star rating must be between 1 and 5");
+        Helper.requirePositive(numberOfRooms, "Number of Rooms");
+        Helper.requireNonNull(roomType, "Room Type");
+        Helper.requireNonNull(occupancy, "Occupancy");
 
-        return new HotelBooking.Builder(
-                hotelName,
-                location,
-                checkIn,
-                checkOut
-        )
-                .setHotelId(hotelId)
-                .setHotelAddress(hotelAddress)
-                .setHotelPhone(hotelPhone)
-                .setStarRating(starRating)
+        return new HotelBooking.Builder(hotelName, location, checkIn, checkOut)
                 .setRoomType(roomType)
                 .setOccupancy(occupancy)
                 .setLayout(layout)
                 .setBedSize(bedSize)
-                .setRoomNumbers(roomNumbers)
                 .setBreakfastIncluded(breakfastIncluded)
                 .setWifiIncluded(wifiIncluded)
-                .setParkingIncluded(parkingIncluded)
+                .copy(hotel)
+                .build();
+    }
+
+    // Hotel Booking with special requests
+    public static HotelBooking createHotelBookingWithRequests(String hotelName, String location,
+                                                              LocalDateTime checkIn, LocalDateTime checkOut,
+                                                              Customer customer, Traveler traveler,
+                                                              List<String> specialRequests) {
+        HotelBooking hotel = createHotelBooking(hotelName, location, checkIn, checkOut,
+                customer, traveler);
+
+        Helper.requireNonNull(specialRequests, "Special Requests");
+
+        return new HotelBooking.Builder(hotelName, location, checkIn, checkOut)
                 .setSpecialRequests(specialRequests)
-                .setCancellationPolicy(cancellationPolicy)
-                .setBookedBy(customer)
-                .setTravelers(traveler)
-                .setPayment(payment)
-                .setCancellationPolicyObj(cancellationPolicyObj)
+                .copy(hotel)
                 .build();
     }
 }

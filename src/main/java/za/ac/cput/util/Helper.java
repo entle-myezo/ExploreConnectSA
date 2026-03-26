@@ -86,6 +86,9 @@ public class Helper {
 
     public static void requireNotEmptyOrNull(List<String> rewards, String rewards1) {
     }
+
+    public static void requirePositive(double securityDeposit, String securityDeposit1) {
+    }
 }
 
 

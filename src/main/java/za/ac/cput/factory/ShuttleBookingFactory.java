@@ -1,101 +1,96 @@
 package za.ac.cput.factory;
 
 import za.ac.cput.domain.*;
+import za.ac.cput.util.Helper;
 
 import java.time.LocalDateTime;
 
 
-    public class ShuttleBookingFactory {
+public class ShuttleBookingFactory {
 
-        /**
-         * ✅ Basic factory (minimum required fields)
-         */
-        public static ShuttleBooking createShuttleBooking(
-                ShuttleCompanies company,
-                String pickUpLocation,
-                String dropOffLocation,
-                LocalDateTime pickupTime
-        ) {
+    // Basic Shuttle Booking
+    public static ShuttleBooking createShuttleBooking(ShuttleCompanies company,
+                                                      String pickUpLocation,
+                                                      String dropOffLocation,
+                                                      LocalDateTime pickupTime,
+                                                      Customer customer,
+                                                      Traveler traveler) {
+        Helper.requireNonNull(company, "Company");
+        Helper.requireNotEmptyOrNull(pickUpLocation, "Pickup Location");
+        Helper.requireNotEmptyOrNull(dropOffLocation, "Dropoff Location");
+        Helper.requireNonNull(pickupTime, "Pickup Time");
+        Helper.requireNonNull(customer, "Customer");
+        Helper.requireNonNull(traveler, "Traveler");
 
-            // 🔒 Validation
-            if (company == null)
-                throw new IllegalArgumentException("Shuttle company is required");
+        return new ShuttleBooking.Builder(company, pickUpLocation, dropOffLocation, pickupTime)
+                .setBookedBy(customer)
+                .setTravelers(traveler)
+                .build();
+    }
 
-            if (pickUpLocation == null || pickUpLocation.isEmpty())
-                throw new IllegalArgumentException("Pickup location is required");
+    // Shuttle with round trip
+    public static ShuttleBooking createRoundTripShuttle(ShuttleCompanies company,
+                                                        String pickUpLocation,
+                                                        String dropOffLocation,
+                                                        LocalDateTime pickupTime,
+                                                        LocalDateTime returnPickupTime,
+                                                        Customer customer,
+                                                        Traveler traveler) {
+        ShuttleBooking shuttle = createShuttleBooking(company, pickUpLocation, dropOffLocation,
+                pickupTime, customer, traveler);
 
-            if (dropOffLocation == null || dropOffLocation.isEmpty())
-                throw new IllegalArgumentException("Drop-off location is required");
+        Helper.requireNonNull(returnPickupTime, "Return Pickup Time");
 
-            if (pickupTime == null)
-                throw new IllegalArgumentException("Pickup time is required");
+        return new ShuttleBooking.Builder(company, pickUpLocation, dropOffLocation, pickupTime)
+                .setRoundTrip(true)
+                .setReturnPickupTime(returnPickupTime)
+                .copy(shuttle)
+                .build();
+    }
 
-            return new ShuttleBooking.Builder(
-                    company,
-                    pickUpLocation,
-                    dropOffLocation,
-                    pickupTime
-            ).build();
-        }
+    // Shuttle with vehicle and driver details
+    public static ShuttleBooking createShuttleWithVehicle(ShuttleCompanies company,
+                                                          String pickUpLocation,
+                                                          String dropOffLocation,
+                                                          LocalDateTime pickupTime,
+                                                          VehicleType vehicleType,
+                                                          String vehicleModel,
+                                                          String driverName,
+                                                          String driverPhone,
+                                                          Customer customer,
+                                                          Traveler traveler) {
+        ShuttleBooking shuttle = createShuttleBooking(company, pickUpLocation, dropOffLocation,
+                pickupTime, customer, traveler);
 
-        /**
-         * 🔥 Full factory (advanced booking)
-         */
-        public static ShuttleBooking createFullShuttleBooking(
-                ShuttleCompanies company,
-                String pickUpLocation,
-                String dropOffLocation,
-                LocalDateTime pickupTime,
-                LocalDateTime estimatedDropoffTime,
-                boolean isRoundTrip,
-                String returnPickupLocation,
-                LocalDateTime returnPickupTime,
-                int numberOfPassengers,
-                String vehicleModel,
-                VehicleType vehicleType,
-                String licensePlate,
-                String driverName,
-                String driverPhone,
-                boolean childSeat,
-                boolean wheelchairAccessible,
-                double estimatedDistance,
-                Customer customer,
-                Traveler traveler,
-                PaymentDetails payment,
-                CancellationPolicy cancellationPolicy
-        ) {
+        Helper.requireNonNull(vehicleType, "Vehicle Type");
+        Helper.requireNotEmptyOrNull(driverName, "Driver Name");
+        Helper.isValidSouthAfricanPhone(driverPhone);
 
-            // Extra validation
-            if (numberOfPassengers <= 0)
-                throw new IllegalArgumentException("Passengers must be greater than 0");
+        return new ShuttleBooking.Builder(company, pickUpLocation, dropOffLocation, pickupTime)
+                .setVehicleType(vehicleType)
+                .setVehicleModel(vehicleModel)
+                .setDriverName(driverName)
+                .setDriverPhone(driverPhone)
+                .copy(shuttle)
+                .build();
+    }
 
-            if (estimatedDropoffTime != null && estimatedDropoffTime.isBefore(pickupTime))
-                throw new IllegalArgumentException("Drop-off time cannot be before pickup time");
+    // Shuttle with special accommodations
+    public static ShuttleBooking createAccessibleShuttle(ShuttleCompanies company,
+                                                         String pickUpLocation,
+                                                         String dropOffLocation,
+                                                         LocalDateTime pickupTime,
+                                                         boolean wheelchairAccessible,
+                                                         boolean childSeat,
+                                                         Customer customer,
+                                                         Traveler traveler) {
+        ShuttleBooking shuttle = createShuttleBooking(company, pickUpLocation, dropOffLocation,
+                pickupTime, customer, traveler);
 
-            return new ShuttleBooking.Builder(
-                    company,
-                    pickUpLocation,
-                    dropOffLocation,
-                    pickupTime
-            )
-                    .setEstimatedDropoffTime(estimatedDropoffTime)
-                    .setRoundTrip(isRoundTrip)
-                    .setReturnPickupLocation(returnPickupLocation)
-                    .setReturnPickupTime(returnPickupTime)
-                    .setNumberOfPassengers(numberOfPassengers)
-                    .setVehicleModel(vehicleModel)
-                    .setVehicleType(vehicleType)
-                    .setLicensePlate(licensePlate)
-                    .setDriverName(driverName)
-                    .setDriverPhone(driverPhone)
-                    .setChildSeat(childSeat)
-                    .setWheelchairAccessible(wheelchairAccessible)
-                    .setEstimatedDistance(estimatedDistance)
-                    .setBookedBy(customer)
-                    .setTravelers(traveler)
-                    .setPayment(payment)
-                    .setCancellationPolicy(cancellationPolicy)
-                    .build();
-        }
-
+        return new ShuttleBooking.Builder(company, pickUpLocation, dropOffLocation, pickupTime)
+                .setWheelchairAccessible(wheelchairAccessible)
+                .setChildSeat(childSeat)
+                .copy(shuttle)
+                .build();
+    }
 }
