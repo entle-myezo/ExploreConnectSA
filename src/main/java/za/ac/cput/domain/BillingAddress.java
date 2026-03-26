@@ -10,7 +10,7 @@ public class BillingAddress {
     private String country;
     private String phone;
 
-    public BillingAddress(Builder builder) {
+    private BillingAddress(Builder builder) {
         this.fullName = builder.fullName;
         this.addressLine1 = builder.addressLine1;
         this.addressLine2 = builder.addressLine2;
@@ -19,14 +19,6 @@ public class BillingAddress {
         this.postalCode = builder.postalCode;
         this.country = builder.country;
         this.phone = builder.phone;
-    }
-
-    public BillingAddress() {
-
-    }
-
-    public BillingAddress() {
-
     }
 
     // Getters
