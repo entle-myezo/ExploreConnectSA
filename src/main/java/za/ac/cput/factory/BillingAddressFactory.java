@@ -1,60 +1,46 @@
 package za.ac.cput.factory;
 
-public class BillingAddressFactory {
+import za.ac.cput.domain.BillingAddress;
+import za.ac.cput.util.Helper;
 
-        private String streetNumber;
-        private String streetName;
-        private String city;
-        private String postalCode;
+public final class BillingAddressFactory {
 
-        private BillingAddressFactory(BillingAddressFactory billingAddressFactory) {}
+    // Basic Billing Address
+    public static BillingAddress createBillingAddress(String fullName, String addressLine1,
+                                                      String city, String postalCode) {
+        Helper.requireNotEmptyOrNull(fullName, "Full Name");
+        Helper.requireNotEmptyOrNull(addressLine1, "Address Line 1");
+        Helper.requireNotEmptyOrNull(city, "City");
+        Helper.requireNotEmptyOrNull(postalCode, "Postal Code");
 
-        public BillingAddressFactory(Builder builder) {
-            this.streetNumber = builder.streetNumber;
-            this.streetName = builder.streetName;
-            this.city = builder.city;
-            this.postalCode = builder.postalCode;
+        return new BillingAddress.Builder(fullName, addressLine1, city, postalCode)
+                .build();
+    }
 
-        }
+    // Full Billing Address
+    public static BillingAddress createFullBillingAddress(String fullName, String addressLine1,
+                                                          String addressLine2, String city,
+                                                          String state, String postalCode,
+                                                          String country, String phone) {
+        return new BillingAddress.Builder(fullName, addressLine1, city, postalCode)
+                .setAddressLine2(addressLine2)
+                .setState(state)
+                .setCountry(country)
+                .setPhone(phone)
+                .build();
+    }
 
-        // Getters
-
-        public String getStreetNumber() { return streetNumber; }
-        public String getStreetName() { return streetName; }
-        public String getCity() { return city; }
-        public String getPostalCode() { return postalCode; }
-
-
-        public static class Builder {
-            public String streetName;
-            public String streetNumber;
-            private String city;
-            private String postalCode;
-
-
-
-            public Builder setStreetNumber(String streetNumber) {
-                this.streetNumber = streetNumber;
-                return this;
-            }
-
-            public Builder setStreetName(String streetName) {
-                this.streetName = streetName;
-                return this;
-            }
-
-            public Builder setCity(String city) {
-                this.city = city;
-                return this;
-            }
-            public Builder setPostalCode(String postalCode) {
-                this.postalCode = postalCode;
-                return this;
-            }
-
-            }
-            public BillingAddressFactory build() {
-                return new BillingAddressFactory(this);
-            }
-        }
-
+    // South African Billing Address
+    public static BillingAddress createSouthAfricanBillingAddress(String fullName,
+                                                                  String addressLine1,
+                                                                  String city,
+                                                                  String postalCode,
+                                                                  String province,
+                                                                  String phone) {
+        return new BillingAddress.Builder(fullName, addressLine1, city, postalCode)
+                .setState(province)               // province is the state
+                .setCountry("South Africa")
+                .setPhone(phone)
+                .build();
+    }
+}
