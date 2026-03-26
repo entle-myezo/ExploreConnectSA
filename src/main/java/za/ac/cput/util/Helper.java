@@ -2,8 +2,10 @@ package za.ac.cput.util;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class Helper {
@@ -79,16 +81,10 @@ public class Helper {
      * Validates South African ID number
      */
     public static boolean isValidSouthAfricanId(String idNumber) {
-        requireNotEmptyOrNull(idNumber, "ID number");
+        return false;
+    }
 
-        // Basic format: 13 digits
-        String idRegex = "^[0-9]{13}$";
-        Pattern pattern = Pattern.compile(idRegex);
-
-        if (!pattern.matcher(idNumber).matches()) {
-            throw new IllegalArgumentException("Invalid South African ID number (must be 13 digits): " + idNumber);
-        }
-        return true;
+    public static void requireNotEmptyOrNull(List<String> rewards, String rewards1) {
     }
 }
 
