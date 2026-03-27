@@ -1,35 +1,36 @@
 package za.ac.cput.repository;
 
+import za.ac.cput.domain.BillingAddress;
 import za.ac.cput.util.Helper;
 
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
-public class BillingAddressRepository {
 
-    public static class billingAddressRepository implements IBillingAddressRepository {
-        private static billingAddressRepository repo = null;
+public class BillingAddressRepository implements IBillingAddressRepository {
+        private static BillingAddressRepository repo = null;
         private Map<Long, BillingAddress> addressMap;
         private AtomicLong idCounter;
 
-        private billingAddressRepository() {
+        private BillingAddressRepository() {
             addressMap = new HashMap<>();
             idCounter = new AtomicLong(1);
         }
 
-        public static billingAddressRepository getRepository() {
+        public static BillingAddressRepository getRepository() {
             if (repo == null) {
-                repo = new billingAddressRepository();
+                repo = new BillingAddressRepository();
             }
             return repo;
         }
 
         @Override
-        public za.ac.cput.repository.BillingAddressRepository.BillingAddressRepository create(BillingAddress address) {
+        public BillingAddress create(BillingAddress address) {
             Helper.requireNonNull(address, "Billing Address");
             Long id = idCounter.getAndIncrement();
             addressMap.put(id, address);
-            return billingAddress;
+            return address;
         }
 
         @Override
@@ -87,4 +88,4 @@ public class BillingAddressRepository {
                     .collect(Collectors.toList());
         }
     }
-}
+

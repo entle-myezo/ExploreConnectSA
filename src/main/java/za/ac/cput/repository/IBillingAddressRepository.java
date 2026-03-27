@@ -5,6 +5,8 @@ import za.ac.cput.domain.BillingAddress;
 import java.util.List;
 
 public interface IBillingAddressRepository extends IRepository<BillingAddress, Long> {
+    BillingAddress findById(Long id);
+
     List<BillingAddress> findByCity(String city);
     List<BillingAddress> findByPostalCode(String postalCode);
     List<BillingAddress> findByCountry(String country);
