@@ -1,17 +1,22 @@
 package za.ac.cput.domain;
 
+import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-
+@Entity
 public class CancellationPolicy {
+    @Id
     private String policyId;
     private String policyName;
     private int hoursBeforeCancellation;
     private double refundPercentage;
     private boolean allowsModification;
+    @Lob
     private String terms;
+
+    protected CancellationPolicy(){}
 
     private CancellationPolicy(Builder builder) {
         this.policyId = builder.policyId;
@@ -57,12 +62,6 @@ public class CancellationPolicy {
         private double refundPercentage;
         private boolean allowsModification;
         private String terms;
-
-        public Builder(String policyName, double refundPercentage) {
-            this.policyId = IdGenerator.getInstance().toString();
-            this.policyName = policyName;
-            this.refundPercentage = refundPercentage;
-        }
 
         public Builder setHoursBeforeCancellation(int hoursBeforeCancellation) {
             this.hoursBeforeCancellation = hoursBeforeCancellation;

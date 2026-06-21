@@ -1,16 +1,23 @@
 package za.ac.cput.domain;
 
+import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 
 import java.io.File;
 import java.time.LocalDateTime;
-
+@Entity
 public class BookingConfirmation {
+    @Id
     private String confirmationNumber;
     private String qrCode;
     private LocalDateTime confirmationTime;
+    @OneToOne
+    @JoinColumn(name = "booking_id")
     private Booking booking;
+    @Lob
     private String termsAndConditions;
+
+    protected BookingConfirmation(){}
 
     private BookingConfirmation(Builder builder) {
         this.confirmationNumber = builder.confirmationNumber;
@@ -64,13 +71,6 @@ public class BookingConfirmation {
         private Booking booking;
         private String termsAndConditions;
 
-        public Builder(Booking booking) {
-            this.confirmationNumber = "CNF-" + IdGenerator.getInstance().toString().substring(0, 8).toUpperCase();
-            this.qrCode = "QR-" + IdGenerator.getInstance().toString();
-            this.confirmationTime = LocalDateTime.now();
-            this.booking = booking;
-            this.termsAndConditions = "Standard terms and conditions apply.";
-        }
 
         public Builder setTermsAndConditions(String termsAndConditions) {
             this.termsAndConditions = termsAndConditions;

@@ -1,5 +1,8 @@
 package za.ac.cput.domain;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class BillingAddress {
     private String fullName;
     private String addressLine1;
@@ -9,6 +12,8 @@ public class BillingAddress {
     private String postalCode;
     private String country;
     private String phone;
+
+    protected BillingAddress(){}
 
     private BillingAddress(Builder builder) {
         this.fullName = builder.fullName;
