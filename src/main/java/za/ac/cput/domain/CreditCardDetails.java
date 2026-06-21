@@ -1,12 +1,18 @@
 package za.ac.cput.domain;
 
+import jakarta.persistence.*;
+
+@Embeddable
 public class CreditCardDetails {
+    @Id
     private String cardNumber;
     private String cardHolderName;
     private String expiryDate;
     private String lastFourDigits;
     private String cardType;
     private boolean isDefault;
+
+    protected CreditCardDetails(){}
 
     private CreditCardDetails(Builder builder) {
         this.cardNumber = builder.cardNumber;
@@ -71,6 +77,31 @@ public class CreditCardDetails {
             } else {
                 this.cardType = "Unknown";
             }
+        }
+
+        public Builder setCardNumber(String cardNumber) {
+            this.cardNumber = cardNumber;
+            return this;
+        }
+
+        public Builder setCardHolderName(String cardHolderName) {
+            this.cardHolderName = cardHolderName;
+            return this;
+        }
+
+        public Builder setExpiryDate(String expiryDate) {
+            this.expiryDate = expiryDate;
+            return this;
+        }
+
+        public Builder setLastFourDigits(String lastFourDigits) {
+            this.lastFourDigits = lastFourDigits;
+            return this;
+        }
+
+        public Builder setCardType(String cardType) {
+            this.cardType = cardType;
+            return this;
         }
 
         public Builder setDefault(boolean isDefault) {

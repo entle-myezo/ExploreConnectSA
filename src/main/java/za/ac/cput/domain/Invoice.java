@@ -1,31 +1,37 @@
 package za.ac.cput.domain;
 
+import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Entity
 public class Invoice {
+    @Id
     private String invoiceNumber;
     private LocalDateTime issueDate;
     private LocalDateTime dueDate;
+    @OneToOne
+    @JoinColumn(name = "booking_id")
     private Booking booking;
-    private BillingAddress billingAddress;
-    private List<LineItem> items;
-    private double subtotal;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "invoice_id")
+    private List<LineItem> items = new ArrayList<>();
+
     private double tax;
     private double total;
     private String paymentTerms;
+
+    protected Invoice(){}
 
     private Invoice(Builder builder) {
         this.invoiceNumber = builder.invoiceNumber;
         this.issueDate = builder.issueDate;
         this.dueDate = builder.dueDate;
         this.booking = builder.booking;
-        this.billingAddress = builder.billingAddress;
         this.items = builder.items != null ? builder.items : new ArrayList<>();
-        this.subtotal = builder.subtotal;
         this.tax = builder.tax;
         this.total = builder.total;
         this.paymentTerms = builder.paymentTerms;
@@ -37,17 +43,15 @@ public class Invoice {
     public String getInvoiceNumber() { return invoiceNumber; }
     public LocalDateTime getIssueDate() { return issueDate; }
     public LocalDateTime getDueDate() { return dueDate; }
-    public Booking getBooking() { return booking; }
-    public BillingAddress getBillingAddress() { return billingAddress; }
+    public Booking getBooking() {return booking;}
     public List<LineItem> getItems() { return items; }
-    public double getSubtotal() { return subtotal; }
     public double getTax() { return tax; }
     public double getTotal() { return total; }
     public String getPaymentTerms() { return paymentTerms; }
 
     // Business methods
     public void calculateTotals() {
-        this.subtotal = items.stream()
+        double subtotal = items.stream()
                 .mapToDouble(LineItem::getTotal)
                 .sum();
         this.tax = subtotal * 0.15; // 15% VAT
@@ -74,7 +78,6 @@ public class Invoice {
                 "invoiceNumber='" + invoiceNumber + '\'' +
                 ", issueDate=" + issueDate +
                 ", dueDate=" + dueDate +
-                ", subtotal=" + subtotal +
                 ", tax=" + tax +
                 ", total=" + total +
                 '}';
@@ -85,34 +88,11 @@ public class Invoice {
         private LocalDateTime issueDate;
         private LocalDateTime dueDate;
         private Booking booking;
-        private BillingAddress billingAddress;
         private List<LineItem> items;
-        private double subtotal;
         private double tax;
         private double total;
         private String paymentTerms;
 
-        public Builder(Booking booking) {
-            this.invoiceNumber = "INV-" + IdGenerator.getInstance().toString().substring(0, 8).toUpperCase();
-            this.issueDate = LocalDateTime.now();
-            this.dueDate = issueDate.plusDays(7);
-            this.booking = booking;
-            this.paymentTerms = "Due within 7 days";
-            this.items = new ArrayList<>();
-
-            // Add default line item for the booking
-            LineItem defaultItem = new LineItem.Builder(
-                    "Booking: " + booking.getBookingDetails(),
-                    1,
-                    booking.getSubtotal()
-            ).build();
-            this.items.add(defaultItem);
-        }
-
-        public Builder setBillingAddress(BillingAddress billingAddress) {
-            this.billingAddress = billingAddress;
-            return this;
-        }
 
         public Builder setItems(List<LineItem> items) {
             this.items = items;
@@ -137,9 +117,7 @@ public class Invoice {
             this.issueDate = invoice.issueDate;
             this.dueDate = invoice.dueDate;
             this.booking = invoice.booking;
-            this.billingAddress = invoice.billingAddress;
             this.items = invoice.items;
-            this.subtotal = invoice.subtotal;
             this.tax = invoice.tax;
             this.total = invoice.total;
             this.paymentTerms = invoice.paymentTerms;
