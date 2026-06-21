@@ -1,12 +1,14 @@
 package za.ac.cput.repository;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import za.ac.cput.domain.Location;
+import za.ac.cput.factory.LocationFactory;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class LocationTest {
+class LocationRepositoryTest {
 
     private LocationRepository repo;
 

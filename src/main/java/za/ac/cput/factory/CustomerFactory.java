@@ -74,7 +74,6 @@ public class CustomerFactory {
                 .setPreferredLanguage(preferredLanguage)
                 .setContacts(contacts)
                 .setAddresses(addresses)
-                .copy(customer)
                 .build();
     }
 

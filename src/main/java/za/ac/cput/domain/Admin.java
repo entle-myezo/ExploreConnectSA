@@ -1,32 +1,36 @@
 package za.ac.cput.domain;
 
+import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 
 import java.time.LocalDateTime;
 import java.util.*;
-
-public class Admin  extends User {
+@Entity
+public class Admin extends User {
+    @Id
     private String empId;
     private String department;
     private String accessLevel;
     private LocalDateTime hireDate;
 
     // Relationships
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Report> generatedReports;
+    @OneToMany(mappedBy = "bookedBy")
     private List<Booking> managedBookings;
 
+    protected Admin(){}
+
     private Admin(Builder builder) {
-        // User fields
         this.userId = builder.userId;
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
         this.email = builder.email;
         this.password = builder.password;
-        this.role = UserRole.ADMIN;
+        this.role = builder.role;
         this.isActive = builder.isActive;
         this.createdAt = builder.createdAt;
         this.lastLogin = builder.lastLogin;
-
         // Admin specific fields
         this.empId = builder.empId;
         this.department = builder.department;
@@ -67,11 +71,7 @@ public class Admin  extends User {
     @Override
     public String toString() {
         return "Admin{" +
-                "userId=" + userId +
-                ", empId='" + empId + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
+                "empId='" + empId + '\'' +
                 ", department='" + department + '\'' +
                 ", accessLevel='" + accessLevel + '\'' +
                 ", hireDate=" + hireDate +
@@ -81,35 +81,76 @@ public class Admin  extends User {
     }
 
     public static class Builder {
-        // Required fields
         private Long userId;
         private String firstName;
         private String lastName;
         private String email;
         private String password;
+        private UserRole role;
         private boolean isActive;
-        private LocalDateTime createdAt;
+        private LocalDateTime createdAt = LocalDateTime.now();
         private LocalDateTime lastLogin;
-        private String empId;
 
-        // Optional fields
+        private String empId;
         private String department;
         private String accessLevel;
         private LocalDateTime hireDate;
         private List<Report> generatedReports;
         private List<Booking> managedBookings;
 
-        public Builder(String firstName, String lastName, String email, String password, String empId) {
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.email = email;
-            this.password = password;
-            this.empId = empId;
-            this.userId = IdGenerator.getInstance().generateId();
-            this.createdAt = LocalDateTime.now();
-            this.isActive = true;
+        public Builder() {
+            this.role = UserRole.ADMIN;
             this.hireDate = LocalDateTime.now();
         }
+        public Builder setUserId(Long userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder setFirstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public Builder setLastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public Builder setEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder setPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder setRole(UserRole role) {
+            this.role = role;
+            return this;
+        }
+
+        public Builder setActive(boolean active) {
+            isActive = active;
+            return this;
+        }
+
+        public Builder setCreatedAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public Builder setLastLogin(LocalDateTime lastLogin) {
+            this.lastLogin = lastLogin;
+            return this;
+        }
+
+        public Builder setEmpId(String empId){
+          this.empId = empId;
+          return this;
+      }
 
         public Builder setDepartment(String department) {
             this.department = department;
@@ -136,10 +177,6 @@ public class Admin  extends User {
             return this;
         }
 
-        public Builder setLastLogin(LocalDateTime lastLogin) {
-            this.lastLogin = lastLogin;
-            return this;
-        }
 
         public Builder copy(Admin admin) {
             this.userId = admin.userId;
@@ -147,6 +184,7 @@ public class Admin  extends User {
             this.lastName = admin.lastName;
             this.email = admin.email;
             this.password = admin.password;
+            this.role = admin.role;
             this.isActive = admin.isActive;
             this.createdAt = admin.createdAt;
             this.lastLogin = admin.lastLogin;

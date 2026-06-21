@@ -1,10 +1,15 @@
 package za.ac.cput.domain;
 
+import jakarta.persistence.*;
+import jakarta.persistence.Embedded;
 import za.ac.cput.util.IdGenerator;
 
 import java.util.regex.Pattern;
 
+@Entity
 public class ContactDetails {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long contactId;
     private String cellNumber;
     private String email;
@@ -12,6 +17,8 @@ public class ContactDetails {
     private String workPhone;
     private String emergencyContact;
     private String emergencyPhone;
+
+    protected ContactDetails() {}
 
     private ContactDetails(Builder builder) {
         this.contactId = builder.contactId;

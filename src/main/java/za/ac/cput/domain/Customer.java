@@ -1,38 +1,52 @@
 package za.ac.cput.domain;
 
+import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Entity
 public class Customer extends User {
+    @Enumerated(EnumType.STRING)
     private IdentityType identityType;
+    @Id
     private String identityNumber;
     private LocalDateTime dateOfBirth;
     private String nationality;
     private int loyaltyPoints;
+    @Enumerated(EnumType.STRING)
     private LanguageType preferredLanguage;
-
     // Relationships
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "customer_id")
     private List<Address> addresses;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "contact_id")
     private ContactDetails contacts;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "loyalty_program_id")
     private LoyaltyProgram loyaltyProgram;
-    private List<PaymentMethod> savedPayments;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "customer_id")
+    private List<PaymentDetails> savedPayments;
+    @OneToMany(mappedBy = "bookedBy", cascade = CascadeType.ALL)
     private List<Booking> bookingHistory;
+    @OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
-    public Customer(Builder builder) {
-        // User fields
+    protected Customer() {}
+
+    private Customer(Builder builder) {
         this.userId = builder.userId;
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
         this.email = builder.email;
         this.password = builder.password;
-        this.role = UserRole.CUSTOMER;
+        this.role = builder.role;
         this.isActive = builder.isActive;
         this.createdAt = builder.createdAt;
         this.lastLogin = builder.lastLogin;
-
         // Customer specific fields
         this.identityType = builder.identityType;
         this.identityNumber = builder.identityNumber;
@@ -64,17 +78,13 @@ public class Customer extends User {
     public List<Address> getAddresses() { return addresses; }
     public ContactDetails getContacts() { return contacts; }
     public LoyaltyProgram getLoyaltyProgram() { return loyaltyProgram; }
-    public List<PaymentMethod> getSavedPayments() { return savedPayments; }
+    public List<PaymentDetails> getSavedPayments() { return savedPayments; }
     public List<Booking> getBookingHistory() { return bookingHistory; }
     public List<Review> getReviews() { return reviews; }
 
     // Helper methods
     public String getPhoneNumber() {
         return contacts != null ? contacts.getCellNumber() : null;
-    }
-
-    public String getEmailAddress() {
-        return email;
     }
 
     public void addAddress(Address address) {
@@ -85,7 +95,7 @@ public class Customer extends User {
         this.addresses.remove(address);
     }
 
-    public void addPaymentMethod(PaymentMethod method) {
+    public void addPaymentMethod(PaymentDetails method) {
         this.savedPayments.add(method);
     }
 
@@ -97,11 +107,7 @@ public class Customer extends User {
     @Override
     public String toString() {
         return "Customer{" +
-                "userId=" + userId +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", identityType=" + identityType +
+                "identityType=" + identityType +
                 ", identityNumber='" + identityNumber + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
                 ", nationality='" + nationality + '\'' +
@@ -116,15 +122,15 @@ public class Customer extends User {
                 '}';
     }
 
-    public static class Builder {
-        // Required fields from User
+    public static class Builder{
         private Long userId;
         private String firstName;
         private String lastName;
         private String email;
         private String password;
+        private UserRole role;
         private boolean isActive;
-        private LocalDateTime createdAt;
+        private LocalDateTime createdAt = LocalDateTime.now();
         private LocalDateTime lastLogin;
 
         // Customer specific fields
@@ -139,19 +145,59 @@ public class Customer extends User {
         private List<Address> addresses;
         private ContactDetails contacts;
         private LoyaltyProgram loyaltyProgram;
-        private List<PaymentMethod> savedPayments;
+        private List<PaymentDetails> savedPayments;
         private List<Booking> bookingHistory;
         private List<Review> reviews;
 
         // Required constructor with mandatory fields
-        public Builder(String firstName, String lastName, String email, String password) {
+
+        public Builder setUserId(Long userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder setFirstName(String firstName) {
             this.firstName = firstName;
+            return this;
+        }
+
+        public Builder setLastName(String lastName) {
             this.lastName = lastName;
+            return this;
+        }
+
+        public Builder setEmail(String email) {
             this.email = email;
+            return this;
+        }
+
+        public Builder setPassword(String password) {
             this.password = password;
-            this.userId = IdGenerator.getInstance().generateId();
-            this.createdAt = LocalDateTime.now();
-            this.isActive = true;
+            return this;
+        }
+
+        public Builder setRole(UserRole role) {
+            this.role = role;
+            return this;
+        }
+
+        public Builder setActive(boolean active) {
+            isActive = active;
+            return this;
+        }
+
+        public Builder setCreatedAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public Builder setLastLogin(LocalDateTime lastLogin) {
+            this.lastLogin = lastLogin;
+            return this;
+        }
+
+        public Builder() {
+            this.role = UserRole.CUSTOMER;
         }
 
         public Builder setIdentityType(IdentityType identityType) {
@@ -188,6 +234,13 @@ public class Customer extends User {
             this.addresses = addresses;
             return this;
         }
+        public Builder addAddress(Address address) {
+            if (this.addresses == null) {
+                this.addresses = new ArrayList<>();
+            }
+            this.addresses.add(address);
+            return this;
+        }
 
         public Builder setContacts(ContactDetails contacts) {
             this.contacts = contacts;
@@ -199,7 +252,7 @@ public class Customer extends User {
             return this;
         }
 
-        public Builder setSavedPayments(List<PaymentMethod> savedPayments) {
+        public Builder setSavedPayments(List<PaymentDetails> savedPayments) {
             this.savedPayments = savedPayments;
             return this;
         }
@@ -214,10 +267,7 @@ public class Customer extends User {
             return this;
         }
 
-        public Builder setLastLogin(LocalDateTime lastLogin) {
-            this.lastLogin = lastLogin;
-            return this;
-        }
+
 
         public Builder copy(Customer customer) {
             this.userId = customer.userId;
@@ -225,6 +275,7 @@ public class Customer extends User {
             this.lastName = customer.lastName;
             this.email = customer.email;
             this.password = customer.password;
+            this.role = customer.role;
             this.isActive = customer.isActive;
             this.createdAt = customer.createdAt;
             this.lastLogin = customer.lastLogin;

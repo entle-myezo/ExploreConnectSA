@@ -2,83 +2,42 @@ package za.ac.cput.factory;
 
 import za.ac.cput.domain.BoardingPass;
 import za.ac.cput.domain.FlightBooking;
+import za.ac.cput.util.Helper;
 
 import java.util.HashMap;
 
-public class BoardingPassRepository implements IBoardingPassRepository {
+public class BoardingPassFactory {
+    // Boarding Pass from Flight Booking
+    public static BoardingPass createBoardingPass(FlightBooking flightBooking) {
+        Helper.requireNonNull(flightBooking, "Flight Booking");
 
-    private static BoardingPassRepository repo = null;
-    private Map<String, BoardingPass> boardingPassMap;
-
-    private BoardingPassRepository() {
-        boardingPassMap = new HashMap<>();
+        return new BoardingPass.Builder(flightBooking)
+                .build();
     }
 
-    public static BoardingPassRepository getRepository() {
-        if (repo == null) repo = new BoardingPassRepository();
-        return repo;
+    // Boarding Pass with specific gate
+    public static BoardingPass createBoardingPassWithGate(FlightBooking flightBooking,
+                                                          String gate) {
+        BoardingPass pass = createBoardingPass(flightBooking);
+
+        Helper.requireNotEmptyOrNull(gate, "Gate");
+
+        return new BoardingPass.Builder(flightBooking)
+                .setGate(gate)
+                .copy(pass)
+                .build();
     }
 
-    @Override
-    public BoardingPass create(BoardingPass boardingPass) {
-        Helper.requireNonNull(boardingPass, "Boarding Pass");
-        if (boardingPass.getBookingReference() == null) {
-            throw new IllegalArgumentException("Booking Reference cannot be null");
-        }
-        if (boardingPassMap.containsKey(boardingPass.getBookingReference())) {
-            throw new IllegalArgumentException("Boarding Pass for booking " + boardingPass.getBookingReference() + " already exists");
-        }
-        boardingPassMap.put(boardingPass.getBookingReference(),
-                boardingPass);
-        return boardingPass;
-    }
+    // Boarding Pass with assigned seat
+    public static BoardingPass createBoardingPassWithSeat(FlightBooking flightBooking,
+                                                          String seatNumber) {
+        BoardingPass pass = createBoardingPass(flightBooking);
 
-    @Override
-    public BoardingPass read(String id) {
-        Helper.requireNonNull(id, "Booking Reference");
-        return boardingPassMap.get(id);
-    }
+        Helper.requireNotEmptyOrNull(seatNumber, "Seat Number");
 
-    @Override
-    public BoardingPass update(BoardingPass boardingPass) {
-        Helper.requireNonNull(boardingPass, "Boarding Pass");
-        if (boardingPass.getBookingReference() == null) throw new IllegalArgumentException("Booking Reference cannot be null");
-        if (!boardingPassMap.containsKey(boardingPass.getBookingReference()))
-            throw new IllegalArgumentException("Boarding Pass for booking " + boardingPass.getBookingReference() + " does not exist");
-
-        boardingPassMap.put(boardingPass.getBookingReference(), boardingPass);
-        return boardingPass;
-    }
-
-    @Override
-    public BoardingPass delete(String id) {
-        Helper.requireNonNull(id, "Booking Reference");
-        return boardingPassMap.remove(id);
-    }
-
-    @Override
-    public List<BoardingPass> getAll() {
-        return new ArrayList<>(boardingPassMap.values());
-    }
-
-    @Override
-    public BoardingPass findById(String id) {
-        return read(id);
-    }
-
-    @Override
-    public BoardingPass findByBookingReference(String bookingReference) {
-        Helper.requireNotEmptyOrNull(bookingReference, "Booking Reference");
-        return boardingPassMap.get(bookingReference);
-    }
-
-    @Override
-    public BoardingPass findByFlightNumber(String flightNumber) {
-        Helper.requireNotEmptyOrNull(flightNumber, "Flight Number");
-        return boardingPassMap.values().stream()
-                .filter(pass -> pass.getFlightNumber() != null &&
-                        pass.getFlightNumber().equals(flightNumber))
-                .findFirst()
-                .orElse(null);
+        return new BoardingPass.Builder(flightBooking)
+                .setSeatNumber(seatNumber)
+                .copy(pass)
+                .build();
     }
 }
