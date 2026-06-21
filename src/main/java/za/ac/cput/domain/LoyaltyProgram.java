@@ -1,16 +1,22 @@
 package za.ac.cput.domain;
 
+import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Entity
 public class LoyaltyProgram {
+    @Id
     private Long programId;
     private int points;
     private String tier;
     private LocalDateTime joinDate;
+    @ElementCollection
     private List<String> rewards;
+
+    protected LoyaltyProgram(){}
 
     private LoyaltyProgram(Builder builder) {
         this.programId = builder.programId;
@@ -80,8 +86,9 @@ public class LoyaltyProgram {
             this.rewards = new ArrayList<>();
         }
 
-        public Builder() {
-
+        public Builder setProgramId(Long programId) {
+            this.programId = programId;
+            return this;
         }
 
         public Builder setPoints(int points) {

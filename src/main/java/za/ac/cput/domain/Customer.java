@@ -64,6 +64,10 @@ public class Customer extends User {
         this.reviews = builder.reviews != null ? builder.reviews : new ArrayList<>();
     }
 
+    public Customer() {
+
+    }
+
     // Getters
     public IdentityType getIdentityType() { return identityType; }
     public String getIdentityNumber() { return identityNumber; }

@@ -1,17 +1,23 @@
 package za.ac.cput.domain;
 
+import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 
 import java.io.File;
 import java.time.LocalDateTime;
 
+@Entity
 public class Report {
+    @Id
     private String reportId;
     private String reportType;
     private LocalDateTime generatedDate;
     private String generatedBy;
+    @Lob
     private byte[] data;
     private String format;
+
+    protected Report(){}
 
     private Report(Builder builder) {
         this.reportId = builder.reportId;
@@ -64,12 +70,24 @@ public class Report {
         private byte[] data;
         private String format;
 
-        public Builder(String reportType, String generatedBy, String format) {
-            this.reportId = IdGenerator.getInstance().toString();
+        public Builder setReportId(String reportId) {
+            this.reportId = reportId;
+            return this;
+        }
+
+        public Builder setReportType(String reportType) {
             this.reportType = reportType;
+            return this;
+        }
+
+        public Builder setGeneratedDate(LocalDateTime generatedDate) {
+            this.generatedDate = generatedDate;
+            return this;
+        }
+
+        public Builder setGeneratedBy(String generatedBy) {
             this.generatedBy = generatedBy;
-            this.format = format;
-            this.generatedDate = LocalDateTime.now();
+            return this;
         }
 
         public Builder setData(byte[] data) {
@@ -77,8 +95,8 @@ public class Report {
             return this;
         }
 
-        public Builder setGeneratedDate(LocalDateTime generatedDate) {
-            this.generatedDate = generatedDate;
+        public Builder setFormat(String format) {
+            this.format = format;
             return this;
         }
 

@@ -1,11 +1,14 @@
 package za.ac.cput.domain;
 
+import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 
 import java.time.LocalDate;
 import java.util.*;
 
+@Entity
 public class Traveler {
+    @Id
     private Long travelerId;
     private int adultCount;
     private int childCount;
@@ -13,6 +16,8 @@ public class Traveler {
     private List<String> travelerNames;
     private List<LocalDate> travelerAges;
     private List<String> passportNumbers;
+
+    protected Traveler(){}
 
     private Traveler(Builder builder) {
         this.travelerId = builder.travelerId;
@@ -93,13 +98,6 @@ public class Traveler {
         private List<String> travelerNames;
         private List<LocalDate> travelerAges;
         private List<String> passportNumbers;
-
-        public Builder() {
-            this.travelerId = IdGenerator.getInstance().generateId();
-            this.adultCount = 1; // Default 1 adult
-            this.childCount = 0;
-            this.infantCount = 0;
-        }
 
         public Builder setAdultCount(int adultCount) {
             this.adultCount = adultCount;

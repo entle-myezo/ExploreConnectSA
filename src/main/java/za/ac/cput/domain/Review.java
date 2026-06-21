@@ -1,10 +1,13 @@
 package za.ac.cput.domain;
 
+import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 
 import java.time.LocalDateTime;
-
+@Entity
 public class Review {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
     private int rating;
     private String comment;
@@ -13,8 +16,14 @@ public class Review {
     private String serviceId;
 
     // Relationships
+    @ManyToOne
+    @JoinColumn(name = "reviewer_id")
     private Customer reviewer;
+    @ManyToOne
+    @JoinColumn(name = "reviewer_id")
     private Booking booking;
+
+    protected Review(){}
 
     private Review(Builder builder) {
         this.reviewId = builder.reviewId;
@@ -69,13 +78,6 @@ public class Review {
         private Customer reviewer;
         private Booking booking;
 
-        public Builder(int rating, String comment, Customer reviewer) {
-            this.reviewId = IdGenerator.getInstance().generateId();
-            this.rating = rating;
-            this.comment = comment;
-            this.reviewer = reviewer;
-            this.date = LocalDateTime.now();
-        }
 
         public Builder setServiceType(String serviceType) {
             this.serviceType = serviceType;
