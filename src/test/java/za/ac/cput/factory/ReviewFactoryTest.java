@@ -16,100 +16,87 @@ class ReviewFactoryTest {
 
     @BeforeEach
     void setUp() {
-        // objects just for testing
+        // Arrange shared objects used across tests
         customer = new Customer();
         booking = new Booking() {
-
+            @Override
             public Booking modifyBooking() {
                 return null;
             }
 
+            @Override
             public String getBookingDetails() {
                 return "";
             }
 
+            @Override
             public Invoice generateInvoice() {
                 return null;
             }
         };
     }
 
-    // Test basic review creation
+    // Test 1: Basic review is created successfully
     @Test
-    void createReview() {
+    void testCreateReview() {
+        // Arrange & Act
+        Review review = ReviewFactory.createReview(5, "Excellent service", customer);
 
-        Review review = ReviewFactory.createReview(
-                5,
-                "Excellent service",
-                customer
-        );
-
+        // Assert
         assertNotNull(review);
         assertEquals(5, review.getRating());
-
+        assertEquals("Excellent service", review.getComment());
         System.out.println(review);
     }
 
-    // Test invalid rating
+    // Test 2: Rating above 5 should throw an exception
     @Test
-    void createReviewInvalidRating() {
-
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            ReviewFactory.createReview(
-                    6,
-                    "Bad rating",
-                    customer
-            );
-        });
+    void testCreateReviewWithInvalidRating() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                ReviewFactory.createReview(6, "Bad rating", customer));
 
         assertEquals("Rating must be between 1 and 5", exception.getMessage());
     }
 
-    // Test null reviewer
+    // Test 3: Null reviewer should throw an exception
     @Test
-    void createReviewNullReviewer() {
-
-        assertThrows(NullPointerException.class, () -> {
-            ReviewFactory.createReview(
-                    4,
-                    "Good",
-                    null
-            );
-        });
+    void testCreateReviewWithNullReviewer() {
+        assertThrows(NullPointerException.class, () ->
+                ReviewFactory.createReview(4, "Good", null));
     }
 
-    // Test service review creation
+    // Test 4: Empty comment should throw an exception
     @Test
-    void createServiceReview() {
+    void testCreateReviewWithEmptyComment() {
+        assertThrows(IllegalArgumentException.class, () ->
+                ReviewFactory.createReview(3, "", customer));
+    }
 
+    // Test 5: Service review is created with full details
+    @Test
+    void testCreateServiceReview() {
         Review review = ReviewFactory.createServiceReview(
-                4,
-                "Nice booking experience",
-                customer,
-                "Flight",
-                "FL123",
-                booking
-        );
+                4, "Nice booking experience", customer, "Flight", "FL123", booking);
 
+        // Assert
         assertNotNull(review);
         assertEquals(4, review.getRating());
-
+        assertEquals("Flight", review.getServiceType());
+        assertEquals("FL123", review.getServiceId());
         System.out.println(review);
     }
 
-    // Test invalid service type
+    // Test 6: Empty service type should throw an exception
     @Test
-    void createServiceReviewInvalidServiceType() {
+    void testCreateServiceReviewWithEmptyServiceType() {
+        assertThrows(IllegalArgumentException.class, () ->
+                ReviewFactory.createServiceReview(4, "Test", customer, "", "ID123", booking));
+    }
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            ReviewFactory.createServiceReview(
-                    4,
-                    "Test",
-                    customer,
-                    "",
-                    "ID123",
-                    booking
-            );
-        });
+    // Test 7: Null booking should throw an exception
+    @Test
+    void testCreateServiceReviewWithNullBooking() {
+        assertThrows(NullPointerException.class, () ->
+                ReviewFactory.createServiceReview(4, "Test", customer, "Flight", "FL123", null));
     }
 }
