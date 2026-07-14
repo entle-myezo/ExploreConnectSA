@@ -15,9 +15,8 @@ public class AddressFactory {
 
     private static final IdGenerator idGenerator = new IdGenerator();
 
-    /**
-     * Creates a basic address
-     */
+    // Creates a basic address
+
     public static Address createAddress(String streetNumber, String streetName,
                                         String suburb, String city,
                                         String province, String postalCode,
@@ -46,9 +45,8 @@ public class AddressFactory {
                 .build();
     }
 
-    /**
-     * Creates a full address with address type and default flag
-     */
+    //Creates a full address with address type and default flag
+
     public static Address createFullAddress(String streetNumber, String streetName,
                                             String suburb, String city,
                                             String province, String postalCode,

@@ -3,7 +3,7 @@ package za.ac.cput.factory;
 
    CarRentalBooking Factory Testing class
 
-   Author: Kabelo Moloko (230117015)
+   Author: Zamandlovu C Ndlovu (211204803)
 
    Date: 28 June 2026
 */

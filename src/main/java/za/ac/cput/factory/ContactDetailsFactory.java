@@ -15,9 +15,8 @@ public class ContactDetailsFactory {
 
     private static final IdGenerator idGenerator = new IdGenerator();
 
-    /**
-     * Creates basic contact details
-     */
+    //Creates basic contact details
+
     public static ContactDetails createContactDetails(String cellNumber, String email) {
         Helper.requireValidSouthAfricanPhone(cellNumber, "Cell Number");
         Helper.requireValidEmail(email, "Email");
@@ -31,9 +30,8 @@ public class ContactDetailsFactory {
                 .build();
     }
 
-    /**
-     * Creates full contact details with optional fields
-     */
+    // Creates full contact details with optional fields
+
     public static ContactDetails createFullContactDetails(String cellNumber, String email,
                                                           String homePhone, String workPhone,
                                                           String emergencyContact, String emergencyPhone) {

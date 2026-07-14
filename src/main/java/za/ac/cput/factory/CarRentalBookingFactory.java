@@ -3,7 +3,7 @@ package za.ac.cput.factory;
 
    CarRentalBooking Factory class
 
-   Author: Kabelo Moloko (230117015)
+   Author: Zamandlovu C Ndlovu (211204803)
 
    Date: 28 June 2026
 */
@@ -16,9 +16,8 @@ import java.time.LocalDateTime;
 public class CarRentalBookingFactory{
     private static final IdGenerator idGenerator = new IdGenerator();
 
-    /**
-     * Creates a basic car rental
-     */
+    //Creates a basic car rental
+
     public static CarRentalBooking createCarRental(String rentalCompany, String carModel,
                                                    LocalDateTime pickupDate, LocalDateTime returnDate,
                                                    Customer customer, Traveler traveler) {
@@ -47,9 +46,8 @@ public class CarRentalBookingFactory{
                 .build();
     }
 
-    /**
-     * Creates a car rental with extras
-     */
+    // Creates a car rental with extras
+
     public static CarRentalBooking createCarRentalWithExtras(String rentalCompany, String carModel,
                                                              LocalDateTime pickupDate, LocalDateTime returnDate,
                                                              boolean insurance, boolean gps,
@@ -67,9 +65,8 @@ public class CarRentalBookingFactory{
                 .build();
     }
 
-    /**
-     * Creates a one-way car rental
-     */
+    // Creates a one-way car rental
+
     public static CarRentalBooking createOneWayCarRental(String rentalCompany, String carModel,
                                                          LocalDateTime pickupDate, LocalDateTime returnDate,
                                                          String pickupLocation, String returnLocation,
@@ -88,9 +85,8 @@ public class CarRentalBookingFactory{
                 .build();
     }
 
-    /**
-     * Creates a car rental with policy details
-     */
+    //Creates a car rental with policy details
+
     public static CarRentalBooking createCarRentalWithPolicy(String rentalCompany, String carModel,
                                                              LocalDateTime pickupDate, LocalDateTime returnDate,
                                                              String fuelPolicy, int mileageLimit,
@@ -111,9 +107,8 @@ public class CarRentalBookingFactory{
                 .build();
     }
 
-    /**
-     * Calculates rental days between two dates
-     */
+    // Calculates rental days between two dates
+
     private static double calculateRentalDays(LocalDateTime pickupDate, LocalDateTime returnDate) {
         return java.time.temporal.ChronoUnit.DAYS.between(pickupDate, returnDate);
     }
