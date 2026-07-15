@@ -32,6 +32,9 @@ public class LoyaltyProgram {
         this.rewards = builder.rewards != null ? builder.rewards : new ArrayList<>();
     }
 
+    public static void resolveTier(int points) {
+    }
+
     // Getters
     public Long getProgramId() { return programId; }
     public int getPoints() { return points; }
